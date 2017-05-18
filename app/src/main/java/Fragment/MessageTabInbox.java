@@ -88,13 +88,14 @@ public class MessageTabInbox extends Fragment {
         View view = inflater.inflate(R.layout.fragment_message_tab_inbox, container, false);
 
         InboxListView = (ListView)view.findViewById(R.id.MessageInboxListView);
-        test();
+        InitListViewInbox();
 
         return view;
     }
 
-    public void test(){
-        read_message();
+
+    public void InitListViewInbox(){
+        ReadInbox();
         MessageList messageList = new MessageList(this.getContext(),R.layout.messagetablist,smsList);
         InboxListView.setAdapter(messageList);
         InboxListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
@@ -114,6 +115,7 @@ public class MessageTabInbox extends Fragment {
                 dialog.show();
             }
         });
+
     }
 
     // TODO: Rename method, update argument and hook method into UI event
@@ -132,6 +134,7 @@ public class MessageTabInbox extends Fragment {
             throw new RuntimeException(context.toString()
                     + " must implement OnFragmentInteractionListener");
         }
+
     }
 
     @Override
@@ -154,14 +157,12 @@ public class MessageTabInbox extends Fragment {
         // TODO: Update argument type and name
         void OnTabInboxFragmentInteractionListener(Uri uri);
     }
-    public void read_message(){
-
+    public void ReadInbox(){
 
         Uri uriInbox = Uri.parse("content://sms/inbox");
         Cursor cursorInbox = getActivity().getApplicationContext().getContentResolver().query(uriInbox, null, null ,null,null);
         getActivity().startManagingCursor(cursorInbox);
 
-        // Read the sms data and store it in the list
         if(cursorInbox.moveToFirst()) {
             for(int i=0; i < cursorInbox.getCount(); i++) {
                 SmsData sms = new SmsData();

@@ -1,13 +1,22 @@
 package Fragment;
 
 import android.content.Context;
+import android.content.DialogInterface;
+import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v7.app.AlertDialog;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
+import android.widget.ListView;
 
+import java.util.ArrayList;
+
+import Adapter.MessageList;
+import DataStruct.SmsData;
 import comyware.example.duongtan.spyware.R;
 
 /**
@@ -27,6 +36,10 @@ public class MessageTabDraft extends Fragment {
     // TODO: Rename and change types of parameters
     private String mParam1;
     private String mParam2;
+
+    private ArrayList<SmsData> smsList = new ArrayList<SmsData>();
+    private ListView DraftListView;
+
 
     private OnTabDraftFragmentInteractionListener mListener;
 
@@ -65,8 +78,37 @@ public class MessageTabDraft extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_message_tab_draft, container, false);
+        View view = inflater.inflate(R.layout.fragment_message_tab_draft, container, false);
+
+        DraftListView = (ListView)view.findViewById(R.id.MessageDraftListView);
+        InitDraftViewInbox();
+
+        return view;
     }
+
+    public void InitDraftViewInbox(){
+        ReadDraft();
+        MessageList messageList = new MessageList(this.getContext(),R.layout.messagetablist,smsList);
+        DraftListView.setAdapter(messageList);
+        DraftListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                System.out.println(position);
+                AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+
+                builder.setNegativeButton("Đóng", new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {
+                        // User cancelled the dialog
+                    }
+                });
+                builder.setTitle(smsList.get(position).getNumber());
+                builder.setMessage(smsList.get(position).getBody());
+                AlertDialog dialog = builder.create();
+                dialog.show();
+            }
+        });
+    }
+
 
     // TODO: Rename method, update argument and hook method into UI event
     public void onButtonPressed(Uri uri) {
@@ -105,5 +147,23 @@ public class MessageTabDraft extends Fragment {
     public interface OnTabDraftFragmentInteractionListener {
         // TODO: Update argument type and name
         void OnTabDraftFragmentInteractionListener(Uri uri);
+    }
+    public void ReadDraft(){
+
+        Uri uriInbox = Uri.parse("content://sms/draft");
+        Cursor cursorInbox = getActivity().getApplicationContext().getContentResolver().query(uriInbox, null, null ,null,null);
+        getActivity().startManagingCursor(cursorInbox);
+
+        if(cursorInbox.moveToFirst()) {
+            for(int i=0; i < cursorInbox.getCount(); i++) {
+                SmsData sms = new SmsData();
+                sms.setBody(cursorInbox.getString(cursorInbox.getColumnIndexOrThrow("body")).toString());
+                sms.setNumber(cursorInbox.getString(cursorInbox.getColumnIndexOrThrow("address")).toString());
+                smsList.add(sms);
+
+                cursorInbox.moveToNext();
+            }
+        }
+        cursorInbox.close();
     }
 }

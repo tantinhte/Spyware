@@ -77,6 +77,7 @@ public class Default extends Fragment {
 
     @Override
     public void onAttach(Context context) {
+
         super.onAttach(context);
         if (context instanceof OnDefaultFragmentInteractionListener) {
             mListener = (OnDefaultFragmentInteractionListener) context;
