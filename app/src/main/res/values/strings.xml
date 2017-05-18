@@ -6,7 +6,7 @@
 
     <string name="action_settings">Settings</string>
     <string name="TEXT_VIEW">text view</string>
-
+    <string name="OkButton">OK</string>
     <!-- Define for information -->
     <string name="MyEmail">Tandd3@viettel.com.vn</string>
     <string name="MyName">Duong Dinh Tan</string>

@@ -1,14 +1,20 @@
 package Fragment;
 
 import android.content.Context;
+import android.content.DialogInterface;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
+import android.preference.DialogPreference;
+import android.preference.Preference;
 import android.support.v4.app.Fragment;
+import android.support.v7.app.AlertDialog;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.ListView;
+import android.widget.Toast;
 
 import comyware.example.duongtan.spyware.R;
 
@@ -16,6 +22,7 @@ import java.util.ArrayList;
 
 import Adapter.MessageList;
 import DataStruct.SmsData;
+
 
 /**
  * A simple {@link Fragment} subclass.
@@ -69,17 +76,10 @@ public class MessageTabInbox extends Fragment {
             mParam1 = getArguments().getString(ARG_PARAM1);
             mParam2 = getArguments().getString(ARG_PARAM2);
         }
-        read_message();
-        MessageList messageList = new MessageList(this.getContext(),R.layout.messagetablist,smsList);
-        InboxListView.setAdapter(messageList);
-        InboxListView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-
-            }
-        });
 
     }
+
+
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -87,8 +87,33 @@ public class MessageTabInbox extends Fragment {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_message_tab_inbox, container, false);
 
-        InboxListView = (ListView)getView().findViewById(R.id.MessageInboxListView);
+        InboxListView = (ListView)view.findViewById(R.id.MessageInboxListView);
+        test();
+
         return view;
+    }
+
+    public void test(){
+        read_message();
+        MessageList messageList = new MessageList(this.getContext(),R.layout.messagetablist,smsList);
+        InboxListView.setAdapter(messageList);
+        InboxListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                System.out.println(position);
+                AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+
+                builder.setNegativeButton("Đóng", new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {
+                        // User cancelled the dialog
+                    }
+                });
+                builder.setTitle(smsList.get(position).getNumber());
+                builder.setMessage(smsList.get(position).getBody());
+                AlertDialog dialog = builder.create();
+                dialog.show();
+            }
+        });
     }
 
     // TODO: Rename method, update argument and hook method into UI event
